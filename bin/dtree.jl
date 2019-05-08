@@ -1,30 +1,7 @@
 import JSON
 using Pipe
 
-module MapUtils
-
-export most_common, count_map
-
-function most_common(data)
-    dict = count_map(data)
-    println(dict)
-    max_v = 0
-    max_k = 0
-    for (k, v) in dict
-        if v > max_v
-            max_k = k
-            max_v = v
-        end
-    end
-    (max_k, max_v)
-end
-
-function count_map(data)
-    uniq = unique(data)
-    Dict([(i, count(x->x == i, data)) for i in uniq])
-end
-
-end
+include("MapUtils.jl")
 
 using .MapUtils
 
@@ -49,19 +26,22 @@ function best_feat(data)
         sum([e(v) for v in iter_data])
     end
     features = length(data[1]) - 1
-    best_feat = @pipe [baseline - feat_entropy(f) for f in 1:features] |>
-        maximum |>
-        abs |>
-        trunc(Int, _)
-    println("best_feat = $(best_feat)")
-    best_feat + 1
+    baselines = [trunc(Int, baseline - feat_entropy(f)) for f in 1:features]
+    max_v = 0
+    max_k = 1
+    for i in 1:length(baselines)
+        v = baselines[i]
+        if v > max_v
+            max_k = i
+            max_v = v
+        end
+    end
+    best_feat = baselines[max_k]
+    max_k
 end
 
 function create_tree(data, label)
-    println("entro")
     (category, count) = most_common([item[end] for item in data])
-    println("count $count")
-    println("length $(length(data))")
     if count == length(data)
         return Bool(category)
     end
@@ -70,10 +50,8 @@ function create_tree(data, label)
     feature_label = label[feature]
     node[feature_label] = Dict()
     classes = unique([d[feature] for d in data])
-    println("feature $feature_label - classes $classes")
     for c in classes
-        partitioned_data::Array{Array{Float64}} = [(println("forin $(d[feature]) == $c"); d) for d in data if d[feature] == c]
-        println("part = $partitioned_data")
+        partitioned_data = [d for d in data if d[feature] == c]
         node[feature_label][c] = create_tree(partitioned_data, label)
     end
     node
@@ -85,9 +63,7 @@ function classify(tree, label, data)
     index = findfirst(x->x == root, label)
     for k in keys(node)
         if data[index] == k
-            println("isa(node[k], Dict) = $(isa(node[k], Dict))")
             if isa(node[k], Dict)
-                println("rec call")
                 return classify(node[k], label, data)
             else
                 return node[k]
@@ -96,12 +72,27 @@ function classify(tree, label, data)
     end
 end
 
-file = joinpath(pwd(), "assets", "data.json")
-labels = ["x", "y", "escape"]
-open(file, "r") do f
-    data = JSON.parse(read(file, String))
-    tree = create_tree(data, labels)
-    println("Tree = \n$tree")
-    res = classify(tree, labels, [67.1837, 35.2426])
-    println("Res = \n$res")
+function main_json()
+    file = joinpath(pwd(), "assets", "data.json")
+    labels = ["x", "y", "escape"]
+    open(file, "r") do f
+        data = JSON.parse(read(file, String))
+        tree = create_tree(data, labels)
+        println("Tree = \n$tree")
+        res = classify(tree, labels, [67.1837, 35.2426])
+        println("Res = \n$res")
+    end
 end
+
+function main_data()
+    data = [[0.0, 0.0, false],
+        [-1.0, 0.0, true]]
+    labels = ["x", "y", "out"]
+    tree = create_tree(data, labels)
+    println("Tree = $tree")
+    category = classify(tree, labels, [-1, 0])
+    println("Res = $category")
+end
+
+main_json()
+# main_data()

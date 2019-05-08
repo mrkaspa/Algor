@@ -1,0 +1,19 @@
+entro
+Dict(0.0=>1,1.0=>1)
+count 1
+length 2
+best_feat = 1
+feature y - classes [0.0, 1.0]
+forin 0.0 == 0.0
+part = Array{Float64,N} where N[[0.0, 0.0, 0.0]]
+entro
+Dict(0.0=>1)
+count 1
+length 1
+forin 1.0 == 1.0
+part = Array{Float64,N} where N[[-1.0, 1.0, 1.0]]
+entro
+Dict(1.0=>1)
+count 1
+length 1
+Tree = Dict{String,Any}("y"=>Dict{Any,Any}(0.0=>false,1.0=>true))
