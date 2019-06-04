@@ -101,6 +101,7 @@ function main()
             crossover(_, width) |>
             mutate(_)
     end
+    println("Origin $generation0")
     println("Res $res")
 end
 
