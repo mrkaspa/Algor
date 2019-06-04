@@ -95,14 +95,25 @@ function main()
     height = 5
     width = 10
     generation = random_tries(items)
-    generation0 = copy(generation) # save to contrast with last epoch
     res = reduce(1:epochs; init = generation) do generation, _
         @pipe generation |>
             crossover(_, width) |>
             mutate(_)
     end
-    println("Origin $generation0")
-    println("Res $res")
+    println("GenZer0 >>")
+    showres(generation, width, height)
+    println("\n\nSolution >>")
+    showres(res, width, height)
+end
+
+function showres(generation::Generation, width, height)
+    res = map(generation) do gen
+        (theta, v) = gen
+        (gen, hit_coordinate(theta, v, width), escaped(theta, v, width, height))
+    end
+    for (gen, coord, escaped_) in res
+        println("with $gen hit coord = $coord and escaped? $escaped_")
+    end
 end
 
 main()
