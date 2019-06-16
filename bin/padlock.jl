@@ -18,7 +18,7 @@ function traverse_matrix(f::Function, matrix::Array{Int32,2})
     end
 end
 
-function create_matrix(dims)
+function create_matrix(dims)::Array{Int32,2}
     matrix = zeros(Int32, dims)
     n = 1
     traverse_matrix(matrix) do i, j
@@ -55,7 +55,7 @@ end
 
 function show_solutions(matrix, pos, solutions, steps)
     println("solutions for $(matrix[pos[1], pos[2]])")
-    sols = []
+    sols::Vector{Vector{Int32}} = []
     rec = (elem, acc)->begin
         ((i, j), children) = elem
         acc = vcat(acc, matrix[i, j])
