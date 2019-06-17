@@ -1,4 +1,6 @@
 using Plots
+using LinearAlgebra
+using Pipe
 
 const x_axis = 50
 const y_axis = 50
@@ -29,8 +31,45 @@ function in_bag(x, y)
     x >= 0 && x <= bag_w && y >= 0 && y <= bag_h
 end
 
-function move(x, y)
-    (x + randn(), y + randn())
+function find_knn(p, particles; knn = 10)
+    (pid, px, py) = p
+
+    fst = t->begin
+        (_, dist) = t
+        dist
+    end
+
+    @pipe particles |>
+    filter(t->begin
+        (id, _x, _y) = t
+        pid == id
+    end, _) |>
+    map(t->begin
+        (id, nx, ny) = t
+        (id, norm([px, py] - [nx, ny]))
+    end, _) |>
+    sort(_, by = fst) |>
+    Iterators.take(_, knn) |>
+    collect(_) |>
+    map(t->begin
+        id = t[1]
+        particles[id]
+    end, _)
+end
+
+function center_point(nns)
+    (x, y) = reduce(nns, init = (0.0, 0.0)) do (accx, accy), (_, x, y)
+        (accx + x, accy + y)
+    end
+    (x / length(nns), y / length(nns))
+end
+
+function move(p, particles)
+    (_, x, y) = p
+    nns = find_knn(p, particles, knn = 5)
+    (cx, cy) = center_point(nns)
+    (x + rand([1, -1]) * (rand(1:10) / 100 * cx),
+    y + rand([1, -1]) * (rand(1:10) / 100 * cy))
 end
 
 function init()
@@ -56,7 +95,7 @@ function main(n)
         for p in particles
             (id, x, y) = p
             println("particle $id, in bag? = $(in_bag(x, y))")
-            (nx, ny) = move(x, y)
+            (nx, ny) = move(p, particles)
             println("id $id")
             particles[id] = (id, nx, ny)
             println("next point ($nx, $ny)")
@@ -67,4 +106,4 @@ function main(n)
     end
 end
 
-main(5)
+main(30)
