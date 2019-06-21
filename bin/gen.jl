@@ -1,4 +1,4 @@
-using Pipe
+using Lazy
 import Distributions: Uniform
 
 Generation = Vector{Tuple{Float64,Float64}}
@@ -96,9 +96,7 @@ function main()
     width = 10
     generation = random_tries(items)
     res = reduce(1:epochs; init = generation) do generation, _
-        @pipe generation |>
-            crossover(_, width) |>
-            mutate(_)
+        @> generation crossover(width) mutate()
     end
     println("GenZer0 >>")
     showres(generation, width, height)

@@ -1,6 +1,6 @@
 using Plots
 using LinearAlgebra
-using Pipe
+using Lazy
 
 const x_axis = 50
 const y_axis = 50
@@ -39,22 +39,23 @@ function find_knn(p, particles; knn = 10)
         dist
     end
 
-    @pipe particles |>
-    filter(t->begin
-        (id, _x, _y) = t
-        pid == id
-    end, _) |>
-    map(t->begin
-        (id, nx, ny) = t
-        (id, norm([px, py] - [nx, ny]))
-    end, _) |>
-    sort(_, by = fst) |>
-    Iterators.take(_, knn) |>
-    collect(_) |>
-    map(t->begin
-        id = t[1]
-        particles[id]
-    end, _)
+    @as acc particles begin
+        filter(t->begin
+            (id, _x, _y) = t
+            pid == id
+        end, acc)
+        map(t->begin
+            (id, nx, ny) = t
+            (id, norm([px, py] - [nx, ny]))
+        end, acc)
+        sort(acc, by = fst)
+        Iterators.take(acc, knn)
+        collect(acc)
+        map(t->begin
+            id = t[1]
+            particles[id]
+        end, acc)
+    end
 end
 
 function center_point(nns)
