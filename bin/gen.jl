@@ -1,7 +1,7 @@
 using Lazy
 import Distributions: Uniform
 
-Generation = Vector{Tuple{Float64,Float64}}
+const Generation = Vector{Tuple{Float64,Float64}}
 
 function hit_coordinate(theta, v, width)
     x = width * 0.5
