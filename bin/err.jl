@@ -1,5 +1,4 @@
-struct DivZeroError <: Exception
-end
+struct DivZeroError <: Exception end
 
 Base.showerror(io::IO, e::DivZeroError) = print(io, "DIV BY ZERO")
 
@@ -12,7 +11,7 @@ function may_div(a, b)
 end
 
 try
-    res =  may_div(10, 0)
+    res = may_div(10, 0)
     println("res $res")
 catch err
     if isa(err, DivZeroError)
