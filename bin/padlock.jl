@@ -30,7 +30,7 @@ end
 
 function get_pos_sol(matrix, pos)
     dims = size(matrix)
-    reduce(moves; init = []) do acc, move
+    reduce(moves; init=[]) do acc, move
         inw = pos[1] + move[1]
         jnw = pos[2] + move[2]
         if inw >= 1  && inw <= dims[1] && jnw >= 1  && jnw <= dims[2]
@@ -46,7 +46,7 @@ function search_for_pos(matrix, pos, depth, max_depth)
         return (pos, [])
     end
     solutions = get_pos_sol(matrix, pos)
-    children = reduce(solutions; init = []) do acc, solution
+    children = reduce(solutions; init=[]) do acc, solution
         inner_children = search_for_pos(matrix, solution, depth + 1, max_depth)
         vcat(acc, inner_children)
     end
@@ -56,7 +56,7 @@ end
 function show_solutions(matrix, pos, solutions, steps)
     println("solutions for $(matrix[pos[1], pos[2]])")
     sols::Vector{Vector{Int32}} = []
-    rec = (elem, acc)->begin
+    rec = (elem, acc) -> begin
         ((i, j), children) = elem
         acc = vcat(acc, matrix[i, j])
         for celem in children

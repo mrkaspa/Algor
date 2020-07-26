@@ -17,7 +17,7 @@ end
 
 function count_map(data)
     uniq = unique(data)
-    Dict([(i, count(x->x == i, data)) for i in uniq])
+    Dict([(i, count(x -> x == i, data)) for i in uniq])
 end
 
 end

@@ -31,27 +31,27 @@ function in_bag(x, y)
     x >= 0 && x <= bag_w && y >= 0 && y <= bag_h
 end
 
-function find_knn(p, particles; knn = 10)
+function find_knn(p, particles; knn=10)
     (pid, px, py) = p
 
-    fst = t->begin
+    fst = t -> begin
         (_, dist) = t
         dist
     end
 
     @as acc particles begin
-        filter(t->begin
+        filter(t -> begin
             (id, _x, _y) = t
             pid == id
         end, acc)
-        map(t->begin
+        map(t -> begin
             (id, nx, ny) = t
             (id, norm([px, py] - [nx, ny]))
         end, acc)
-        sort(acc, by = fst)
+        sort(acc, by=fst)
         Iterators.take(acc, knn)
         collect(acc)
-        map(t->begin
+        map(t -> begin
             id = t[1]
             particles[id]
         end, acc)
@@ -59,7 +59,7 @@ function find_knn(p, particles; knn = 10)
 end
 
 function center_point(nns)
-    (x, y) = reduce(nns, init = (0.0, 0.0)) do (accx, accy), (_, x, y)
+    (x, y) = reduce(nns, init=(0.0, 0.0)) do (accx, accy), (_, x, y)
         (accx + x, accy + y)
     end
     (x / length(nns), y / length(nns))
@@ -67,7 +67,7 @@ end
 
 function move(p, particles)
     (_, x, y) = p
-    nns = find_knn(p, particles, knn = 5)
+    nns = find_knn(p, particles, knn=5)
     (cx, cy) = center_point(nns)
     (x + rand([1, -1]) * (rand(1:10) / 100 * cx),
     y + rand([1, -1]) * (rand(1:10) / 100 * cy))
@@ -76,7 +76,7 @@ end
 function init()
     gr()
     if isdir(files_path)
-        rm(files_path, recursive = true)
+        rm(files_path, recursive=true)
     end
     mkdir(files_path)
 end
@@ -91,7 +91,7 @@ function main(n)
         (id, x, y)
     end
     i = 0
-    while all(p->in_bag(p[2], p[3]), particles)
+    while all(p -> in_bag(p[2], p[3]), particles)
         println("attempt $i")
         for p in particles
             (id, x, y) = p

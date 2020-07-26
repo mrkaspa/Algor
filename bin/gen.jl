@@ -95,7 +95,7 @@ function main()
     height = 5
     width = 10
     generation = random_tries(items)
-    res = reduce(1:epochs; init = generation) do generation, _
+    res = reduce(1:epochs; init=generation) do generation, _
         @> generation crossover(width) mutate()
     end
     println("GenZer0 >>")

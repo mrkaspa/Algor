@@ -1,7 +1,7 @@
 using Luxor
 import JSON
 
-escaped = (ypos, xpos)->begin
+escaped = (ypos, xpos) -> begin
     (xpos < -35 || xpos > 35) && (ypos < -35 || ypos > 35)
 end
 
@@ -26,7 +26,7 @@ function main()
         HueShift(tt)
         Turn(tt, 45)
         n += 1
-        push!(moves, (trunc(tt.xpos; digits = 4), trunc(tt.ypos; digits = 4), escaped(tt.xpos, tt.ypos)))
+        push!(moves, (trunc(tt.xpos; digits=4), trunc(tt.ypos; digits=4), escaped(tt.xpos, tt.ypos)))
     end
     finish()
     moves

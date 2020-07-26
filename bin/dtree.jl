@@ -6,7 +6,7 @@ using .MapUtils
 
 function entropy(data)
     freq = count_map([item[end] for item in data])
-    ientropy = (category)->begin
+    ientropy = (category) -> begin
         ratio = float(category) / length(data)
         -1 * ratio * log2(ratio)
     end
@@ -15,8 +15,8 @@ end
 
 function best_feat(data)
     baseline = entropy(data)
-    feat_entropy = f->begin
-        e = v->begin
+    feat_entropy = f -> begin
+        e = v -> begin
             partitioned_data = [d for d in data if d[f] == v]
             proportion = float(length(partitioned_data)) / float(length(data))
             proportion * entropy(partitioned_data)
@@ -59,7 +59,7 @@ end
 function classify(tree, label, data)
     root = collect(keys(tree))[1]
     node = tree[root]
-    index = findfirst(x->x == root, label)
+    index = findfirst(x -> x == root, label)
     for k in keys(node)
         if data[index] == k
             if isa(node[k], Dict)
