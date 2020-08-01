@@ -2,7 +2,7 @@ module MapUtils
 
 export most_common, count_map
 
-function most_common(data)
+function most_common(data)::Tuple{Int64,Int64}
     dict = count_map(data)
     max_v = 0
     max_k = 0
@@ -15,7 +15,7 @@ function most_common(data)
     (max_k, max_v)
 end
 
-function count_map(data)
+function count_map(data)::Dict{Int64,Int64}
     uniq = unique(data)
     Dict([(i, count(x -> x == i, data)) for i in uniq])
 end
